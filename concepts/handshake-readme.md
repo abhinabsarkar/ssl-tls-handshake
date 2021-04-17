@@ -33,5 +33,28 @@ SSL and TLS use a combination of **symmetric and asymmetric encryption** to ensu
 ## Asymmetric & symmetric encryption
 The handshake itself uses asymmetric encryption – two separate keys are used, one public and one private. Since asymmetric encryption systems have much higher overhead, they are not usable to provide full-time, real-world security. Thus, the public key is used for encryption and the private key for decryption during the handshake only, which allows the two parties to confidentially set up and exchange a newly-created “shared key”. The session itself uses this single shared key to perform symmetric encryption, and this is what makes a secure connection feasible in actual practice (the overhead is vastly lower). 
 
-## Basic vs Mutually Authenticated Handshake
+## Basic (One-Way SSL) vs Mutually Authenticated (Two-SSL) Handshake
 Majority of sessions secured by TLS only require the client verify the server. However, some cipher suites will require the client to also send a certificate and public key for mutual authentication of both parties. This two-way authentication will of course add overhead to the handshake – however, in some cases (for instance, where two banks are negotiating a secure connection for fund transfers) the cipher suite will insist upon it, and the extra security is deemed worth it.
+
+### How One-Way SSL Works?
+In one way SSL, only client validates the server to ensure that it receives data from the intended server. For implementing one-way SSL, server shares its public certificate with the clients. 
+Below is the high level description of the steps involved in establishment of connection and transfer of data between a client and server in case of one-way SSL:
+1. Client requests for some protected data from the server on HTTPS protocol. This initiates SSL/TLS handshake process. 
+2. Server returns its public certificate to the client along with server hello message.
+3. Client validates/verifies the received certificate. Client verifies the certificate through certification authority (CA) for CA signed certificates.
+4. SSL/TLS client sends the random byte string that enables both the client and the server to compute the secret key to be used for encrypting subsequent message data. The random byte string itself is encrypted with the server’s public key.
+5. After agreeing on this secret key, client and server communicate further for actual data transfer by encrypting/decrypting data using this key. 
+Below is the pictorial description explaining how one way ssl works:
+![Alt text](/images/one-way-ssl.png)
+### How Two-Way (Mutual) SSL works?
+Contrary to one-way SSL; in case of two-way SSL, both client and server authenticate each other to ensure that both parties involved in the communication are trusted. Both parties share their public certificates to each other and then verification/validation is performed based on that.
+ 
+Below is the high level description of the steps involved in establishment of connection and transfer of data between a client and server in case of two-way SSL:
+1.Client requests a protected resource over HTTPS protocol and the SSL/TSL handshake process begins.
+2 Server returns its public certificate to the client along with server hello. 
+3. Client validates/verifies the received certificate. Client verifies the certificate through certification authority (CA) for CA signed certificates.
+4. If Server certificate was validated successfully, client will provide its public certificate to the server.
+5. Server validates/verifies the received certificate. Server verifies the certificate through certification authority (CA) for CA signed certificates.
+6. After completion of handshake process, client and server communicate and transfer data with each other encrypted with the secret keys shared between the two during handshake. 
+Below image explains the same in pictorial format:
+![Alt text](/images/2-way-ssl.png)
